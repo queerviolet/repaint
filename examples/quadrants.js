@@ -12,6 +12,7 @@ const pipe = Extension (Object) ({
   }
 })
 
+// Compose multiple backgrounds into one CSS style object.
 const backgrounds = (...backgrounds) => backgrounds
   .map(bg => Object.keys(bg))
   .reduce((keys, keySet) => (keySet.forEach(key => keys[key] = true),
@@ -76,11 +77,10 @@ const Quadrants = world =>
              }, backgrounds)
            } />)
 
-//const PaintTracker = Paint (Tracker),
-const    PaintQuadrants = Paint (Quadrants)
+Quadrants.Painter = Paint (Quadrants)
 
 const app = (
-    <PaintQuadrants />
+    <Quadrants.Painter />
 )
 
 require('react-dom').render(app, document.getElementById('app'))

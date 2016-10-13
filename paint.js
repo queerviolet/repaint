@@ -63,13 +63,7 @@ const Paint = painter => {
         return painting.subscribe(this.paint)
       }
 
-      const isFunc = typeof painting === 'function'
-      log('[paint] painting is function:', isFunc)
-      if (isFunc) {
-        const subject = new Rx.Subject()
-        this.paint(painting(subject))
-        return subject
-      }
+      console.error(new Error(`${displayName}: Painting was not paintable or observable`))
     }
 
     getChildContext() {
