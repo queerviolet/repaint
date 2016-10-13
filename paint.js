@@ -5,8 +5,6 @@ const Rx = require('rx')
 const Store = require('react-redux/lib/utils/storeShape').default
 const {select, create} = require('./store')
 
-const EventEmitter = require('eventemitter-rx').default
-
 const reactElement = <h1/>.$$typeof
 
 const Paint = painter => {
@@ -44,25 +42,33 @@ const Paint = painter => {
     }
 
     paint(painting) {
-      log('[paint]', painting, this)
-      log('[paint] painting is function:', typeof painting === 'function')
+      log('[paint] ENTER ', displayName, 'paint(', painting, ')')
 
       if (!painting) return
-      
-      if (Array.isArray(painting) || painting.$$typeof === reactElement) {
-        log('did set leaf state')
+
+      const isArray = Array.isArray(painting)
+      const isReactElement = painting.$$typeof === reactElement
+      log('[paint] painting is array:', isArray)
+      log('[paint] painting is element:', isReactElement)
+      if (isArray || isReactElement) {
+        log('[paint]   ...setting as view state [DONE]')
         this.setState({ current: painting })
         return Rx.Observable.empty()
       }
-      
-      if (typeof painting.subscribe === 'function') {        
+
+      const isRx = typeof painting.subscribe === 'function'
+      log('[paint] painting is RxObservable:', isRx)      
+      if (isRx) {
+        log('[paint]    ...subscribing')
         return painting.subscribe(this.paint)
       }
 
-      if (typeof painting === 'function') {
-        const emitter = new EventEmitter()
-        painting.apply(this, emitter)
-        return emitter
+      const isFunc = typeof painting === 'function'
+      log('[paint] painting is function:', isFunc)
+      if (isFunc) {
+        const subject = new Rx.Subject()
+        this.paint(painting(subject))
+        return subject
       }
     }
 

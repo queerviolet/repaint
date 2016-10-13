@@ -11,7 +11,6 @@
     "build-quadrants-example": "mkdir -p .dist && watchify -o .dist/quadrants-example.js -v -d examples/quadrants.js"
   },
   "dependencies": {
-    "eventemitter-rx": "^1.0.0",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
