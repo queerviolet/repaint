@@ -3,9 +3,10 @@ const ReactDOM = require('react-dom')
 const Rx = require('rx')
 
 const Store = require('react-redux/lib/utils/storeShape').default
-const {select, createStore} = require('./store')
+const {select, create} = require('./store')
 
-const paint = Symbol()
+const EventEmitter = require('eventemitter-rx').default
+
 const reactElement = <h1/>.$$typeof
 
 const Paint = painter => {
@@ -24,37 +25,44 @@ const Paint = painter => {
       super(props, context)
       log('store from props', props.store)
       log('store from context', context.store)
-      this.store = props.store || context.store || createStore()
+      this.store = props.store || context.store || create()
       log('store=', this.store)
       this.selection = select(this.store)
       this.painter = painter
       this.state = {current: <empty-painter />}
-      this[paint] = this[paint].bind(this)
+
+      this.paint = this.paint.bind(this)
     }
     
     componentDidMount() {
       console.log('mounted painter', this)
       this.update()
     }
-    
+
     render() {
       return this.state.current
     }
 
-    [paint](painting) {
+    paint(painting) {
       log('[paint]', painting, this)
+      log('[paint] painting is function:', typeof painting === 'function')
+
       if (!painting) return
-      log('[paint] isArray=', Array.isArray(painting))
-      log('[paint] isReactElement=', painting.$$typeof === reactElement)
+      
       if (Array.isArray(painting) || painting.$$typeof === reactElement) {
         log('did set leaf state')
         this.setState({ current: painting })
-        return        
+        return Rx.Observable.empty()
       }
       
-      if (typeof painting.subscribe === 'function') {
-        painting.subscribe(this[paint])
-        return
+      if (typeof painting.subscribe === 'function') {        
+        return painting.subscribe(this.paint)
+      }
+
+      if (typeof painting === 'function') {
+        const emitter = new EventEmitter()
+        painting.apply(this, emitter)
+        return emitter
       }
     }
 
@@ -64,10 +72,10 @@ const Paint = painter => {
     
     update() {
       log('[update]', 'painter=', this.painter)
-      this[paint](
+      this.paint(
         this.painter(
           this.selection,
-          this[paint],        
+          this.paint,
           this.props))
     }
   }
@@ -86,6 +94,6 @@ const Paint = painter => {
   return PainterComponent
 }
 
-Paint.debug = false
+Paint.debug = true
 
 module.exports = Paint

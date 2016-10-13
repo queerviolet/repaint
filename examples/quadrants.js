@@ -43,12 +43,12 @@ const Tracker = (selection, paint, {children}) => {
 }
 
 const Quadrants =
-        selection => selection()
+      selection => selection()
         .map(
           ({x, y}) => {
             const backgroundSize = `${x}px ${y}px`
             const backgroundRepeat = 'no-repeat'
-            const backgroundBlendMode = 'screen'
+            const backgroundBlendMode = 'add'
             return backgrounds(
                     {
                       backgroundPosition: 'top left',
@@ -89,7 +89,7 @@ const PaintTracker = Paint (Tracker),
       PaintQuadrants = Paint (Quadrants)
 
 const app = (
-    <PaintTracker store={createStore()}> {
+    <PaintTracker> {
         <PaintQuadrants />
     } </PaintTracker>
 )

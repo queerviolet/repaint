@@ -9,8 +9,8 @@ const select = store => {
             observer => {
               const emit = state => observer.onNext(state ? state.toJS() : {})
               
-              emit(store.getState())
-              return store.subscribe(_ => emit(store.getState()))
+              emit(store.getState()['/proc'])
+              return store.subscribe(_ => emit(store.getState()['/proc']))
             }
           )
 
@@ -27,12 +27,16 @@ const devTools =
       window.__REDUX_DEVTOOLS_EXTENSION__ &&
       window.__REDUX_DEVTOOLS_EXTENSION__()      
 
-const createStore =
-      () => redux.createStore (
-        (state=Immutable.Map(), action) =>
-          action.type === 'write' ? state.merge(action.write)
-          : undefined,
+const create =
+      root => redux.createStore (
+        redux.combineReducers (Object.assign({
+          '/proc': (state=Immutable.Map(), action) =>
+            action.type === 'write' ? state.merge(action.write)
+            : state,
+        }, root ? {
+          '/root': root
+        } : {})),
         devTools()
       )
 
-module.exports = {select, createStore}
+module.exports = {select, create}
