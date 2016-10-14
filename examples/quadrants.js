@@ -29,14 +29,14 @@ const backgrounds = (...backgrounds) => backgrounds
          
 const solid = color => `linear-gradient(${color}, ${color})`
 
-const Quadrants = world =>
-      world()
+const Quadrants = stream =>
+      stream()
       .map(
         ({x, y}) => {
           console.log('received point:', x, y)
           const backgroundSize = `${x}px ${y}px`
           const backgroundRepeat = 'no-repeat'
-          const backgroundBlendMode = 'add'
+          const backgroundBlendMode = 'screen'
           return backgrounds(
             {
               backgroundPosition: 'top left',
@@ -58,7 +58,7 @@ const Quadrants = world =>
             },
             {
               backgroundPosition: 'bottom left',
-              backgroundImage: solid('black'),
+              backgroundImage: solid('orange'),
               backgroundRepeat, backgroundSize,
               backgroundBlendMode,
             })
@@ -68,7 +68,7 @@ const Quadrants = world =>
            <div
            onMouseMove={
              ({pageX: x, pageY: y}) =>
-               world.write({x, y}) }
+               stream.write({x, y}) }
            style={
              Object.assign({}, {
                position: 'fixed',

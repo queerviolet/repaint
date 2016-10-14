@@ -8,7 +8,8 @@
     "test": "mocha *.test.js --reporter spec",
     "build": "mkdir -p .dist && watchify -o .dist/bundle.js -v -d index.js",
     "build-hello-example": "mkdir -p .dist && watchify -o .dist/hello-example.js -v -d examples/hello.js",
-    "build-quadrants-example": "mkdir -p .dist && watchify -o .dist/quadrants-example.js -v -d examples/quadrants.js"
+    "build-quadrants-example": "mkdir -p .dist && watchify -o .dist/quadrants-example.js -v -d examples/quadrants.js",
+    "build-gesture-example": "mkdir -p .dist && watchify -o .dist/gesture-example.js -v -d examples/gesture.js"
   },
   "dependencies": {
     "react-dom": "^15.3.2",

@@ -94,6 +94,6 @@ const Paint = painter => {
   return PainterComponent
 }
 
-Paint.debug = true
+Paint.debug = false
 
 module.exports = Paint
